@@ -143,3 +143,28 @@ body {
   border-radius: 8px;
   font-size: 14px;
 }
+.form-card-column {
+  background-color: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+}
+
+.form-card-column input,
+.form-card-column select {
+  padding: 10px 12px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}

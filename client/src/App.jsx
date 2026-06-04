@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './App.css';
 import ClassStreams from './pages/ClassStreams';
+import Students from './pages/Students';
 
 function App() {
   const [activePage, setActivePage] = useState('Dashboard');
@@ -25,12 +26,12 @@ function App() {
         </nav>
       </aside>
       <main className="content">
-        {activePage === 'Class Streams' ? (
-          <ClassStreams />
-        ) : (
+        {activePage === 'Class Streams' && <ClassStreams />}
+        {activePage === 'Students' && <Students />}
+        {!['Class Streams', 'Students'].includes(activePage) && (
           <>
             <h2>{activePage}</h2>
-            <p>This is the {activePage} page.</p>
+            <p>This page is coming soon.</p>
           </>
         )}
       </main>
