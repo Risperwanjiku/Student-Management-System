@@ -1,0 +1,115 @@
+import { useState, useEffect } from 'react';
+
+const API_URL = 'http://localhost:5000/api/class-streams';
+
+function ClassStreams() {
+  const [streams, setStreams] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [editingId, setEditingId] = useState(null);
+
+  useEffect(() => {
+    fetchStreams();
+  }, []);
+
+  const fetchStreams = async () => {
+    try {
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      setStreams(data);
+    } catch (err) {
+      console.error('Failed to load streams:', err);
+    }
+  };
+
+  const handleSave = async () => {
+    if (newName.trim() === '') return;
+    try {
+      if (editingId) {
+        await fetch(`${API_URL}/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: newName }),
+        });
+      } else {
+        await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: newName }),
+        });
+      }
+      closeForm();
+      fetchStreams();
+    } catch (err) {
+      console.error('Failed to save stream:', err);
+    }
+  };
+
+  const handleEdit = (stream) => {
+    setEditingId(stream.id);
+    setNewName(stream.name);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+      fetchStreams();
+    } catch (err) {
+      console.error('Failed to delete stream:', err);
+    }
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+    setNewName('');
+    setEditingId(null);
+  };
+
+  return (
+    <div>
+      <div className="page-header">
+        <div>
+          <h2>Class Streams</h2>
+          <p className="page-sub">Manage the academy's class streams.</p>
+        </div>
+        <button className="btn-primary" onClick={() => { closeForm(); setShowForm(true); }}>+ Add Stream</button>
+      </div>
+
+      {showForm && (
+        <div className="form-card">
+          <input
+            type="text"
+            placeholder="Stream name (e.g. Form 1A)"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+          />
+          <button className="btn-primary" onClick={handleSave}>{editingId ? 'Update' : 'Save'}</button>
+          <button className="btn-link" onClick={closeForm}>Cancel</button>
+        </div>
+      )}
+
+      <table className="data-table">
+        <thead>
+          <tr>
+            <th>Stream Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {streams.map((stream) => (
+            <tr key={stream.id}>
+              <td>{stream.name}</td>
+              <td>
+                <button className="btn-link" onClick={() => handleEdit(stream)}>Edit</button>
+                <button className="btn-link danger" onClick={() => handleDelete(stream.id)}>Delete</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default ClassStreams;

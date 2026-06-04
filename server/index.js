@@ -39,6 +39,30 @@ app.post('/api/class-streams', async (req, res) => {
   }
 });
 
+// update a class stream
+app.put('/api/class-streams/:id', async (req, res) => {
+  try {
+    const { name } = req.body;
+    if (!name) {
+      return res.status(400).json({ error: 'Stream name is required' });
+    }
+    await db.query('UPDATE class_streams SET name = ? WHERE id = ?', [name, req.params.id]);
+    res.json({ id: req.params.id, name });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update class stream' });
+  }
+});
+
+// delete a class stream
+app.delete('/api/class-streams/:id', async (req, res) => {
+  try {
+    await db.query('DELETE FROM class_streams WHERE id = ?', [req.params.id]);
+    res.json({ message: 'Class stream deleted' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete class stream' });
+  }
+});
+
 // quick check that the database connection works
 db.query('SELECT 1')
   .then(() => console.log('Connected to MySQL database'))
