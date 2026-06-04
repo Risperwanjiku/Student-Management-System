@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './App.css';
 import ClassStreams from './pages/ClassStreams';
 import Students from './pages/Students';
+import Subjects from './pages/Subjects';
 
 function App() {
   const [activePage, setActivePage] = useState('Dashboard');
@@ -28,7 +29,8 @@ function App() {
       <main className="content">
         {activePage === 'Class Streams' && <ClassStreams />}
         {activePage === 'Students' && <Students />}
-        {!['Class Streams', 'Students'].includes(activePage) && (
+        {activePage === 'Subjects' && <Subjects />}
+        {!['Class Streams', 'Students', 'Subjects'].includes(activePage) && (
           <>
             <h2>{activePage}</h2>
             <p>This page is coming soon.</p>

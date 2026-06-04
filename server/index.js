@@ -5,6 +5,7 @@ const db = require('./db');
 
 const classStreamRoutes = require('./routes/classStreams');
 const studentRoutes = require('./routes/students');
+const subjectRoutes = require('./routes/subjects');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/class-streams', classStreamRoutes);
 app.use('/api/students', studentRoutes);
+app.use('/api/subjects', subjectRoutes);
 
 db.query('SELECT 1')
   .then(() => console.log('Connected to MySQL database'))
