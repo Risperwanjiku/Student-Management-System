@@ -3,6 +3,7 @@ import './App.css';
 import ClassStreams from './pages/ClassStreams';
 import Students from './pages/Students';
 import Subjects from './pages/Subjects';
+import Scores from './pages/Scores';
 
 function App() {
   const [activePage, setActivePage] = useState('Dashboard');
@@ -30,7 +31,8 @@ function App() {
         {activePage === 'Class Streams' && <ClassStreams />}
         {activePage === 'Students' && <Students />}
         {activePage === 'Subjects' && <Subjects />}
-        {!['Class Streams', 'Students', 'Subjects'].includes(activePage) && (
+        {activePage === 'Scores' && <Scores />}
+        {!['Class Streams', 'Students', 'Subjects', 'Scores'].includes(activePage) && (
           <>
             <h2>{activePage}</h2>
             <p>This page is coming soon.</p>

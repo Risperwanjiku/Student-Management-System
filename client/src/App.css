@@ -168,3 +168,33 @@ body {
   gap: 12px;
   align-items: center;
 }
+.filter-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.filter-row select {
+  padding: 10px 12px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  font-size: 14px;
+  min-width: 200px;
+}
+
+.score-input {
+  width: 80px;
+  padding: 8px;
+  border: 1px solid #dddddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.success-msg {
+  color: #2e7d32;
+  background-color: #e8f5e9;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
