@@ -21,6 +21,7 @@ app.use('/api/class-streams', classStreamRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/scores', scoreRoutes);
+app.use('/api/results', require('./routes/results'));
 
 db.query('SELECT 1')
   .then(() => console.log('Connected to MySQL database'))
