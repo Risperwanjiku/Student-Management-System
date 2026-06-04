@@ -128,11 +128,11 @@ function Scores() {
                   <td>{row.name}</td>
                   <td>{row.admission_no}</td>
                   <td>
-                    <input type="number" className="score-input" value={row.cat_score}
+                    <input type="number" className="score-input" min="0" max="40" value={row.cat_score}
                       onChange={(e) => handleChange(row.student_id, 'cat_score', e.target.value)} />
                   </td>
                   <td>
-                    <input type="number" className="score-input" value={row.exam_score}
+                    <input type="number" className="score-input" min="0" max="60" value={row.exam_score}
                       onChange={(e) => handleChange(row.student_id, 'exam_score', e.target.value)} />
                   </td>
                   <td>{(Number(row.cat_score) || 0) + (Number(row.exam_score) || 0)}</td>
