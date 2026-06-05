@@ -1,13 +1,23 @@
 import { useState, useEffect } from 'react';
+import { Pencil, Trash2 } from 'lucide-react';
 
 const API_URL = 'http://localhost:5000/api/students';
 const STREAMS_URL = 'http://localhost:5000/api/class-streams';
 
-function Students() {
+function getInitials(name) {
+  const parts = name.trim().split(' ');
+  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+}
+
+function Students({ search = '' }) {
   const [students, setStudents] = useState([]);
   const [streams, setStreams] = useState([]);
+  const [streamFilter, setStreamFilter] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
   const [name, setName] = useState('');
   const [admissionNo, setAdmissionNo] = useState('');
@@ -39,8 +49,18 @@ function Students() {
     }
   };
 
+  const showMessage = (text) => {
+    setMessage(text);
+    setTimeout(() => setMessage(''), 3000);
+  };
+
   const handleSave = async () => {
-    if (name.trim() === '' || admissionNo.trim() === '') return;
+    if (name.trim() === '' || admissionNo.trim() === '') {
+      setError('Please enter a name and admission number.');
+      return;
+    }
+    setError('');
+    const isEdit = editingId;
     const studentData = {
       name,
       admission_no: admissionNo,
@@ -63,6 +83,7 @@ function Students() {
       }
       closeForm();
       fetchStudents();
+      showMessage(isEdit ? 'Student updated' : 'Student added');
     } catch (err) {
       console.error('Failed to save student:', err);
     }
@@ -74,13 +95,16 @@ function Students() {
     setAdmissionNo(student.admission_no);
     setGender(student.gender || '');
     setClassStreamId(student.class_stream_id || '');
+    setError('');
     setShowForm(true);
   };
 
   const handleDelete = async (id) => {
+    if (!window.confirm('Delete this student? This cannot be undone.')) return;
     try {
       await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
       fetchStudents();
+      showMessage('Student deleted');
     } catch (err) {
       console.error('Failed to delete student:', err);
     }
@@ -93,7 +117,18 @@ function Students() {
     setAdmissionNo('');
     setGender('');
     setClassStreamId('');
+    setError('');
   };
+
+  const filteredStudents = students.filter((student) => {
+    const term = search.toLowerCase();
+    const matchesSearch =
+      student.name.toLowerCase().includes(term) ||
+      student.admission_no.toLowerCase().includes(term);
+    const matchesStream =
+      streamFilter === '' || String(student.class_stream_id) === streamFilter;
+    return matchesSearch && matchesStream;
+  });
 
   return (
     <div>
@@ -105,8 +140,11 @@ function Students() {
         <button className="btn-primary" onClick={() => { closeForm(); setShowForm(true); }}>+ Add Student</button>
       </div>
 
+      {message && <p className="success-msg">{message}</p>}
+
       {showForm && (
         <div className="form-card-column">
+          {error && <p className="error-msg">{error}</p>}
           <input type="text" placeholder="Full name" value={name} onChange={(e) => setName(e.target.value)} />
           <input type="text" placeholder="Admission number" value={admissionNo} onChange={(e) => setAdmissionNo(e.target.value)} />
           <select value={gender} onChange={(e) => setGender(e.target.value)}>
@@ -127,31 +165,58 @@ function Students() {
         </div>
       )}
 
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Admission No</th>
-            <th>Gender</th>
-            <th>Class Stream</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map((student) => (
-            <tr key={student.id}>
-              <td>{student.name}</td>
-              <td>{student.admission_no}</td>
-              <td>{student.gender}</td>
-              <td>{student.stream_name}</td>
-              <td>
-                <button className="btn-link" onClick={() => handleEdit(student)}>Edit</button>
-                <button className="btn-link danger" onClick={() => handleDelete(student.id)}>Delete</button>
-              </td>
-            </tr>
+      <div className="filter-bar">
+        <select value={streamFilter} onChange={(e) => setStreamFilter(e.target.value)}>
+          <option value="">All streams</option>
+          {streams.map((stream) => (
+            <option key={stream.id} value={stream.id}>{stream.name}</option>
           ))}
-        </tbody>
-      </table>
+        </select>
+      </div>
+
+      <div className="table-card">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Student Name</th>
+              <th>Admission Number</th>
+              <th>Class Stream</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredStudents.length === 0 ? (
+              <tr>
+                <td colSpan="4">{search || streamFilter ? 'No students match your filters.' : 'No students added yet.'}</td>
+              </tr>
+            ) : (
+              filteredStudents.map((student) => (
+                <tr key={student.id}>
+                  <td>
+                    <div className="student-cell">
+                      <span className="avatar">{getInitials(student.name)}</span>
+                      <div>
+                        <div className="student-name">{student.name}</div>
+                        <div className="student-gender">{student.gender}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{student.admission_no}</td>
+                  <td>{student.stream_name ? <span className="stream-pill">{student.stream_name}</span> : '-'}</td>
+                  <td>
+                    <button className="icon-btn" title="Edit" onClick={() => handleEdit(student)}>
+                      <Pencil size={16} />
+                    </button>
+                    <button className="icon-btn danger" title="Delete" onClick={() => handleDelete(student.id)}>
+                      <Trash2 size={16} />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

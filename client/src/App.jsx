@@ -25,6 +25,11 @@ function App() {
   const [activePage, setActivePage] = useState('Dashboard');
   const [search, setSearch] = useState('');
 
+  const handleSearch = (value) => {
+    setSearch(value);
+    if (value !== '') setActivePage('Students');
+  };
+
   return (
     <div className="app">
       <aside className="sidebar">
@@ -55,7 +60,7 @@ function App() {
               type="text"
               placeholder="Search students..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSearch(e.target.value)}
             />
           </div>
           <div className="topbar-right">
@@ -68,7 +73,7 @@ function App() {
 
         <main className="content">
           {activePage === 'Class Streams' && <ClassStreams />}
-          {activePage === 'Students' && <Students />}
+          {activePage === 'Students' && <Students search={search} />}
           {activePage === 'Subjects' && <Subjects />}
           {activePage === 'Scores' && <Scores />}
           {activePage === 'Results' && <Results />}
