@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Pencil, Trash2 } from 'lucide-react';
 
 const API_URL = 'http://localhost:5000/api/class-streams';
 
@@ -52,6 +53,7 @@ function ClassStreams() {
   };
 
   const handleDelete = async (id) => {
+    if (!window.confirm('Delete this class stream? This cannot be undone.')) return;
     try {
       await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
       fetchStreams();
@@ -89,25 +91,39 @@ function ClassStreams() {
         </div>
       )}
 
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th>Stream Name</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {streams.map((stream) => (
-            <tr key={stream.id}>
-              <td>{stream.name}</td>
-              <td>
-                <button className="btn-link" onClick={() => handleEdit(stream)}>Edit</button>
-                <button className="btn-link danger" onClick={() => handleDelete(stream.id)}>Delete</button>
-              </td>
+      <div className="table-card">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Stream Name</th>
+              <th>Students</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {streams.length === 0 ? (
+              <tr>
+                <td colSpan="3">No class streams added yet.</td>
+              </tr>
+            ) : (
+              streams.map((stream) => (
+                <tr key={stream.id}>
+                  <td>{stream.name}</td>
+                  <td>{stream.student_count} students</td>
+                  <td>
+                    <button className="icon-btn" title="Edit" onClick={() => handleEdit(stream)}>
+                      <Pencil size={16} />
+                    </button>
+                    <button className="icon-btn danger" title="Delete" onClick={() => handleDelete(stream.id)}>
+                      <Trash2 size={16} />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

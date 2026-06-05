@@ -33,12 +33,19 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    await db.query('DELETE FROM class_streams WHERE id = ?', [req.params.id]);
-    res.json({ message: 'Class stream deleted' });
+    const [rows] = await db.query(
+      `SELECT cs.id, cs.name, cs.created_at, COUNT(s.id) AS student_count
+       FROM class_streams cs
+       LEFT JOIN students s ON s.class_stream_id = cs.id
+       GROUP BY cs.id, cs.name, cs.created_at
+       ORDER BY cs.name`
+    );
+    res.json(rows);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to delete class stream' });
+    console.error('Failed to fetch class streams:', err);
+    res.status(500).json({ error: 'Failed to fetch class streams' });
   }
 });
 

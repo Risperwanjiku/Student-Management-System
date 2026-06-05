@@ -198,3 +198,28 @@ body {
   margin-bottom: 16px;
   font-size: 14px;
 }
+.table-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555555;
+  padding: 6px;
+  border-radius: 6px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.icon-btn:hover {
+  background-color: #f3f3f3;
+  color: #c2185b;
+}
+
+.icon-btn.danger:hover {
+  color: #d32f2f;
+}
