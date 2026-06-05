@@ -8,6 +8,7 @@ function ClassStreams() {
   const [showForm, setShowForm] = useState(false);
   const [newName, setNewName] = useState('');
   const [editingId, setEditingId] = useState(null);
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     fetchStreams();
@@ -23,8 +24,14 @@ function ClassStreams() {
     }
   };
 
+  const showMessage = (text) => {
+    setMessage(text);
+    setTimeout(() => setMessage(''), 3000);
+  };
+
   const handleSave = async () => {
     if (newName.trim() === '') return;
+    const isEdit = editingId;
     try {
       if (editingId) {
         await fetch(`${API_URL}/${editingId}`, {
@@ -41,6 +48,7 @@ function ClassStreams() {
       }
       closeForm();
       fetchStreams();
+      showMessage(isEdit ? 'Class stream updated' : 'Class stream added');
     } catch (err) {
       console.error('Failed to save stream:', err);
     }
@@ -57,6 +65,7 @@ function ClassStreams() {
     try {
       await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
       fetchStreams();
+      showMessage('Class stream deleted');
     } catch (err) {
       console.error('Failed to delete stream:', err);
     }
@@ -77,6 +86,8 @@ function ClassStreams() {
         </div>
         <button className="btn-primary" onClick={() => { closeForm(); setShowForm(true); }}>+ Add Stream</button>
       </div>
+
+      {message && <p className="success-msg">{message}</p>}
 
       {showForm && (
         <div className="form-card">
