@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 
 const SCORES_URL = 'http://localhost:5000/api/scores';
 const STREAMS_URL = 'http://localhost:5000/api/class-streams';
-const SUBJECTS_URL = 'http://localhost:5000/api/subjects';
 
 function Scores() {
   const [streams, setStreams] = useState([]);
@@ -14,25 +13,41 @@ function Scores() {
 
   useEffect(() => {
     fetchStreams();
-    fetchSubjects();
   }, []);
 
+  // when the stream changes, load that stream's subjects and reset the selection
+  useEffect(() => {
+    setSubjectId('');
+    setRows([]);
+    if (streamId) {
+      fetchStreamSubjects(streamId);
+    } else {
+      setSubjects([]);
+    }
+  }, [streamId]);
+
+  // when both a stream and subject are chosen, load the grid
   useEffect(() => {
     if (streamId && subjectId) {
       fetchScores();
     } else {
       setRows([]);
     }
-  }, [streamId, subjectId]);
+  }, [subjectId]);
 
   const fetchStreams = async () => {
     const res = await fetch(STREAMS_URL);
     setStreams(await res.json());
   };
 
-  const fetchSubjects = async () => {
-    const res = await fetch(SUBJECTS_URL);
-    setSubjects(await res.json());
+  const fetchStreamSubjects = async (id) => {
+    try {
+      const res = await fetch(`${STREAMS_URL}/${id}/subjects`);
+      setSubjects(await res.json());
+    } catch (err) {
+      console.error('Failed to load subjects:', err);
+      setSubjects([]);
+    }
   };
 
   const fetchScores = async () => {
@@ -98,7 +113,7 @@ function Scores() {
             <option key={s.id} value={s.id}>{s.name}</option>
           ))}
         </select>
-        <select value={subjectId} onChange={(e) => setSubjectId(e.target.value)}>
+        <select value={subjectId} onChange={(e) => setSubjectId(e.target.value)} disabled={!streamId}>
           <option value="">Select subject</option>
           {subjects.map((s) => (
             <option key={s.id} value={s.id}>{s.name}</option>
@@ -108,39 +123,45 @@ function Scores() {
 
       {message && <p className="success-msg">{message}</p>}
 
+      {streamId && subjects.length === 0 && (
+        <p className="page-sub">This stream has no subjects assigned yet. Assign subjects on the Subjects page.</p>
+      )}
+
       {streamId && subjectId && (
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Student</th>
-              <th>Admission No</th>
-              <th>CAT (out of 40)</th>
-              <th>Exam (out of 60)</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length === 0 ? (
-              <tr><td colSpan="5">No students in this stream yet.</td></tr>
-            ) : (
-              rows.map((row) => (
-                <tr key={row.student_id}>
-                  <td>{row.name}</td>
-                  <td>{row.admission_no}</td>
-                  <td>
-                    <input type="number" className="score-input" min="0" max="40" value={row.cat_score}
-                      onChange={(e) => handleChange(row.student_id, 'cat_score', e.target.value)} />
-                  </td>
-                  <td>
-                    <input type="number" className="score-input" min="0" max="60" value={row.exam_score}
-                      onChange={(e) => handleChange(row.student_id, 'exam_score', e.target.value)} />
-                  </td>
-                  <td>{(Number(row.cat_score) || 0) + (Number(row.exam_score) || 0)}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+        <div className="table-card">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Admission No</th>
+                <th>CAT (out of 40)</th>
+                <th>Exam (out of 60)</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.length === 0 ? (
+                <tr><td colSpan="5">No students in this stream yet.</td></tr>
+              ) : (
+                rows.map((row) => (
+                  <tr key={row.student_id}>
+                    <td>{row.name}</td>
+                    <td>{row.admission_no}</td>
+                    <td>
+                      <input type="number" className="score-input" min="0" max="40" value={row.cat_score}
+                        onChange={(e) => handleChange(row.student_id, 'cat_score', e.target.value)} />
+                    </td>
+                    <td>
+                      <input type="number" className="score-input" min="0" max="60" value={row.exam_score}
+                        onChange={(e) => handleChange(row.student_id, 'exam_score', e.target.value)} />
+                    </td>
+                    <td>{(Number(row.cat_score) || 0) + (Number(row.exam_score) || 0)}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

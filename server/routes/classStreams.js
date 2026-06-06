@@ -49,4 +49,22 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// get the subjects assigned to a stream
+router.get('/:id/subjects', async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT s.id, s.name
+       FROM subjects s
+       JOIN subject_streams ss ON ss.subject_id = s.id
+       WHERE ss.class_stream_id = ?
+       ORDER BY s.name`,
+      [req.params.id]
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error('Failed to fetch stream subjects:', err);
+    res.status(500).json({ error: 'Failed to fetch stream subjects' });
+  }
+});
+
 module.exports = router;
