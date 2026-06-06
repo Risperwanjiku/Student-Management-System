@@ -74,7 +74,7 @@ function Dashboard() {
               streams.map((stream) => (
                 <tr key={stream.id}>
                   <td>{stream.name}</td>
-                  <td>{stream.student_count} students</td>
+                  <td>{stream.student_count} {stream.student_count === 1 ? 'student' : 'students'}</td>
                 </tr>
               ))
             )}
