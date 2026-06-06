@@ -533,3 +533,30 @@ body {
   border-radius: 12px;
   font-size: 14px;
 }
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #f2f2f5;
+  color: #555555;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.rank-badge.top {
+  background-color: #c2185b;
+  color: #ffffff;
+}
+
+.grade-pill {
+  display: inline-block;
+  background-color: #fde6ee;
+  color: #c2185b;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+}

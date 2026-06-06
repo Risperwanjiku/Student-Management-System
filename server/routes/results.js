@@ -23,7 +23,14 @@ router.get('/', async (req, res) => {
       [streamId]
     );
 
-    const [subjects] = await db.query('SELECT id, name FROM subjects ORDER BY name');
+    const [subjects] = await db.query(
+      `SELECT s.id, s.name
+       FROM subjects s
+       JOIN subject_streams ss ON ss.subject_id = s.id
+       WHERE ss.class_stream_id = ?
+       ORDER BY s.name`,
+      [streamId]
+    );
 
     const [scores] = await db.query(
       `SELECT sc.student_id, sc.subject_id, sc.cat_score, sc.exam_score
