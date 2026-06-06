@@ -55,8 +55,8 @@ function Students({ search = '' }) {
   };
 
   const handleSave = async () => {
-    if (name.trim() === '' || admissionNo.trim() === '') {
-      setError('Please enter a name and admission number.');
+   if (name.trim() === '' || admissionNo.trim() === '' || gender === '' || classStreamId === '') {
+      setError('Please fill in all the fields.');
       return;
     }
     setError('');

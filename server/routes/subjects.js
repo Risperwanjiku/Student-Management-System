@@ -42,4 +42,37 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// get the stream ids a subject is assigned to
+router.get('/:id/streams', async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      'SELECT class_stream_id FROM subject_streams WHERE subject_id = ?',
+      [req.params.id]
+    );
+    res.json(rows.map((r) => r.class_stream_id));
+  } catch (err) {
+    console.error('Failed to fetch subject streams:', err);
+    res.status(500).json({ error: 'Failed to fetch subject streams' });
+  }
+});
+
+// replace a subject's stream assignments
+router.put('/:id/streams', async (req, res) => {
+  const subjectId = req.params.id;
+  const { stream_ids } = req.body;
+  try {
+    await db.query('DELETE FROM subject_streams WHERE subject_id = ?', [subjectId]);
+    for (const streamId of stream_ids) {
+      await db.query(
+        'INSERT INTO subject_streams (subject_id, class_stream_id) VALUES (?, ?)',
+        [subjectId, streamId]
+      );
+    }
+    res.json({ message: 'Subject assignments updated' });
+  } catch (err) {
+    console.error('Failed to update subject streams:', err);
+    res.status(500).json({ error: 'Failed to update subject streams' });
+  }
+});
+
 module.exports = router;
