@@ -2,8 +2,9 @@ import { useState } from 'react';
 import './App.css';
 import {
   LayoutDashboard, Layers, Users, BookOpen,
-  ClipboardList, Trophy, FileText, Search, Settings as SettingsIcon
+  ClipboardList, Trophy, FileText, Search, Settings as SettingsIcon, LogOut
 } from 'lucide-react';
+import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ClassStreams from './pages/ClassStreams';
 import Students from './pages/Students';
@@ -24,13 +25,33 @@ const pages = [
 ];
 
 function App() {
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
+  const [username, setUsername] = useState(localStorage.getItem('username') || '');
   const [activePage, setActivePage] = useState('Dashboard');
   const [search, setSearch] = useState('');
+
+  const handleLogin = (newToken, newUsername) => {
+    setToken(newToken);
+    setUsername(newUsername);
+    localStorage.setItem('token', newToken);
+    localStorage.setItem('username', newUsername);
+  };
+
+  const handleLogout = () => {
+    setToken('');
+    setUsername('');
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+  };
 
   const handleSearch = (value) => {
     setSearch(value);
     if (value !== '') setActivePage('Students');
   };
+
+  if (!token) {
+    return <Login onLogin={handleLogin} />;
+  }
 
   return (
     <div className="app">
@@ -69,7 +90,10 @@ function App() {
             <button className="icon-btn" title="Settings" onClick={() => setActivePage('Settings')}>
               <SettingsIcon size={18} />
             </button>
-            <div className="admin-badge">IA</div>
+            <div className="admin-badge">{username ? username.slice(0, 2).toUpperCase() : 'IA'}</div>
+            <button className="icon-btn" title="Log out" onClick={handleLogout}>
+              <LogOut size={18} />
+            </button>
           </div>
         </header>
 

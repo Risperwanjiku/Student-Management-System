@@ -600,3 +600,34 @@ body {
   font-size: 16px;
   margin-bottom: 12px;
 }
+.login-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f6f6f9;
+}
+
+.login-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  padding: 32px;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-title {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+
+.login-card input {
+  padding: 10px 12px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 12px;
+}

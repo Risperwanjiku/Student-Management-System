@@ -17,6 +17,7 @@ app.get('/', (req, res) => {
   res.json({ message: 'Student Management System API is running' });
 });
 
+app.use('/api/auth', require('./routes/auth'));
 app.use('/api/class-streams', classStreamRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/subjects', subjectRoutes);
