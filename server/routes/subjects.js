@@ -4,7 +4,15 @@ const db = require('../db');
 
 router.get('/', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM subjects ORDER BY id');
+    const [rows] = await db.query(
+      `SELECT s.id, s.name, s.code,
+        GROUP_CONCAT(cs.name ORDER BY cs.name SEPARATOR ',') AS streams
+       FROM subjects s
+       LEFT JOIN subject_streams ss ON ss.subject_id = s.id
+       LEFT JOIN class_streams cs ON cs.id = ss.class_stream_id
+       GROUP BY s.id, s.name, s.code
+       ORDER BY s.id`
+    );
     res.json(rows);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch subjects' });

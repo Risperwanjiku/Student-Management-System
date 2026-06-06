@@ -130,6 +130,7 @@ function Subjects() {
         body: JSON.stringify({ stream_ids: assignedStreamIds }),
       });
       setAssigningSubject(null);
+      fetchSubjects();
       showMessage('Subject assignments updated');
     } catch (err) {
       console.error('Failed to save assignments:', err);
@@ -169,6 +170,13 @@ function Subjects() {
               <div className="subject-card-icon"><BookOpen size={20} /></div>
               <div className="subject-card-name">{subject.name}</div>
               <div className="subject-card-code">{subject.code}</div>
+              <div className="subject-card-streams">
+                {subject.streams
+                  ? subject.streams.split(',').map((s) => (
+                      <span className="stream-pill" key={s}>{s}</span>
+                    ))
+                  : <span className="subject-card-unassigned">Not assigned to any stream</span>}
+              </div>
               <div className="subject-card-actions">
                 <button className="icon-btn" title="Assign to streams" onClick={() => openAssign(subject)}>
                   <Layers size={16} />
