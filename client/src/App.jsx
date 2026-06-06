@@ -11,6 +11,7 @@ import Subjects from './pages/Subjects';
 import Scores from './pages/Scores';
 import Results from './pages/Results';
 import Reports from './pages/Reports';
+import Settings from './pages/Settings';
 
 const pages = [
   { name: 'Dashboard', icon: LayoutDashboard },
@@ -80,7 +81,8 @@ function App() {
           {activePage === 'Scores' && <Scores />}
           {activePage === 'Results' && <Results />}
           {activePage === 'Reports' && <Reports />}
-          {!['Dashboard', 'Class Streams', 'Students', 'Subjects', 'Scores', 'Results', 'Reports'].includes(activePage) && (
+          {activePage === 'Settings' && <Settings />}
+          {!['Dashboard', 'Class Streams', 'Students', 'Subjects', 'Scores', 'Results', 'Reports', 'Settings'].includes(activePage) && (
             <>
               <h2>{activePage}</h2>
               <p>This page is coming soon.</p>

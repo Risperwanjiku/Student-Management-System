@@ -22,6 +22,7 @@ app.use('/api/students', studentRoutes);
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/scores', scoreRoutes);
 app.use('/api/results', require('./routes/results'));
+app.use('/api/grading-scale', require('./routes/gradingScale'));
 
 db.query('SELECT 1')
   .then(() => console.log('Connected to MySQL database'))
