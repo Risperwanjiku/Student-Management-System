@@ -13,6 +13,7 @@ import Scores from './pages/Scores';
 import Results from './pages/Results';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
+import Profile from './pages/Profile';
 
 const pages = [
   { name: 'Dashboard', icon: LayoutDashboard },
@@ -90,7 +91,9 @@ function App() {
             <button className="icon-btn" title="Settings" onClick={() => setActivePage('Settings')}>
               <SettingsIcon size={18} />
             </button>
-            <div className="admin-badge">{username ? username.slice(0, 2).toUpperCase() : 'IA'}</div>
+            <div className="admin-badge" title="My Profile" onClick={() => setActivePage('Profile')}>
+              {username ? username.slice(0, 2).toUpperCase() : 'IA'}
+            </div>
             <button className="icon-btn" title="Log out" onClick={handleLogout}>
               <LogOut size={18} />
             </button>
@@ -106,7 +109,8 @@ function App() {
           {activePage === 'Results' && <Results />}
           {activePage === 'Reports' && <Reports />}
           {activePage === 'Settings' && <Settings />}
-          {!['Dashboard', 'Class Streams', 'Students', 'Subjects', 'Scores', 'Results', 'Reports', 'Settings'].includes(activePage) && (
+          {activePage === 'Profile' && <Profile />}
+          {!['Dashboard', 'Class Streams', 'Students', 'Subjects', 'Scores', 'Results', 'Reports', 'Settings', 'Profile'].includes(activePage) && (
             <>
               <h2>{activePage}</h2>
               <p>This page is coming soon.</p>
