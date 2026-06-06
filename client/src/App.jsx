@@ -4,6 +4,7 @@ import {
   LayoutDashboard, Layers, Users, BookOpen,
   ClipboardList, Trophy, FileText, Search, Settings as SettingsIcon
 } from 'lucide-react';
+import Dashboard from './pages/Dashboard';
 import ClassStreams from './pages/ClassStreams';
 import Students from './pages/Students';
 import Subjects from './pages/Subjects';
@@ -72,13 +73,14 @@ function App() {
         </header>
 
         <main className="content">
+          {activePage === 'Dashboard' && <Dashboard />}
           {activePage === 'Class Streams' && <ClassStreams />}
           {activePage === 'Students' && <Students search={search} />}
           {activePage === 'Subjects' && <Subjects />}
           {activePage === 'Scores' && <Scores />}
           {activePage === 'Results' && <Results />}
           {activePage === 'Reports' && <Reports />}
-          {!['Class Streams', 'Students', 'Subjects', 'Scores', 'Results', 'Reports'].includes(activePage) && (
+          {!['Dashboard', 'Class Streams', 'Students', 'Subjects', 'Scores', 'Results', 'Reports'].includes(activePage) && (
             <>
               <h2>{activePage}</h2>
               <p>This page is coming soon.</p>
