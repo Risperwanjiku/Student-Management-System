@@ -5,6 +5,10 @@ import autoTable from 'jspdf-autotable';
 const RESULTS_URL = 'http://localhost:5000/api/results';
 const STREAMS_URL = 'http://localhost:5000/api/class-streams';
 
+// colors for the PDF documents
+const REPORT_COLOR = [30, 58, 95];    // navy for headers and numbers
+const REPORT_TINT = [232, 238, 245];  // light blue for the stat cards
+
 function getInitials(name) {
   const parts = name.trim().split(' ');
   if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
@@ -65,8 +69,8 @@ function Reports() {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
 
-    // pink header band
-    doc.setFillColor(194, 24, 91);
+    // navy header band
+    doc.setFillColor(...REPORT_COLOR);
     doc.rect(0, 0, pageWidth, 30, 'F');
     doc.setTextColor(255);
     doc.setFontSize(18);
@@ -85,7 +89,7 @@ function Reports() {
       r.average,
       r.grade,
     ]);
-    autoTable(doc, { head, body, startY: 38, headStyles: { fillColor: [194, 24, 91] } });
+    autoTable(doc, { head, body, startY: 38, headStyles: { fillColor: REPORT_COLOR } });
 
     // summary line under the table
     const y = doc.lastAutoTable.finalY + 10;
@@ -99,8 +103,8 @@ function Reports() {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
 
-    // pink header band
-    doc.setFillColor(194, 24, 91);
+    // navy header band
+    doc.setFillColor(...REPORT_COLOR);
     doc.rect(0, 0, pageWidth, 32, 'F');
     doc.setTextColor(255);
     doc.setFontSize(20);
@@ -128,7 +132,7 @@ function Reports() {
       student.subjectGrades[s.id],
       ordinal(subjectPositions[s.id]?.[student.student_id]),
     ]);
-    autoTable(doc, { head, body, startY: 72, headStyles: { fillColor: [194, 24, 91] } });
+    autoTable(doc, { head, body, startY: 72, headStyles: { fillColor: REPORT_COLOR } });
 
     const maxTotal = rows.length * 100;
 
@@ -143,13 +147,13 @@ function Reports() {
     const boxH = 28;
     const xs = [14, 77, 140];
     boxes.forEach((b, i) => {
-      doc.setFillColor(253, 230, 238);
+      doc.setFillColor(...REPORT_TINT);
       doc.roundedRect(xs[i], y, boxW, boxH, 3, 3, 'F');
       doc.setFontSize(8);
       doc.setTextColor(150);
       doc.text(b.label, xs[i] + boxW / 2, y + 7, { align: 'center' });
       doc.setFontSize(16);
-      doc.setTextColor(194, 24, 91);
+      doc.setTextColor(...REPORT_COLOR);
       doc.text(b.value, xs[i] + boxW / 2, y + 17, { align: 'center' });
       doc.setFontSize(8);
       doc.setTextColor(150);
