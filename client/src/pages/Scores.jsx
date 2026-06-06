@@ -153,6 +153,7 @@ function Scores() {
           <table className="data-table">
             <thead>
               <tr>
+                <th>No</th>
                 <th>Student</th>
                 <th>CAT (out of 40)</th>
                 <th>Exam (out of 60)</th>
@@ -161,10 +162,11 @@ function Scores() {
             </thead>
             <tbody>
               {rows.length === 0 ? (
-                <tr><td colSpan="4">No students in this stream yet.</td></tr>
+                <tr><td colSpan="5">No students in this stream yet.</td></tr>
               ) : (
-                rows.map((row) => (
+                rows.map((row, index) => (
                   <tr key={row.student_id}>
+                    <td>{index + 1}</td>
                     <td>
                       <div className="student-cell">
                         <span className="avatar">{getInitials(row.name)}</span>
