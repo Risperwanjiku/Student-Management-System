@@ -468,3 +468,11 @@ body {
   color: #aaaaaa;
   font-style: italic;
 }
+.subject-search-input {
+  padding: 10px 14px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 320px;
+  max-width: 100%;
+}

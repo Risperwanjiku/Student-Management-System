@@ -7,6 +7,7 @@ const STREAMS_URL = 'http://localhost:5000/api/class-streams';
 function Subjects() {
   const [subjects, setSubjects] = useState([]);
   const [streams, setStreams] = useState([]);
+  const [subjectSearch, setSubjectSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [name, setName] = useState('');
@@ -137,6 +138,14 @@ function Subjects() {
     }
   };
 
+  const filteredSubjects = subjects.filter((subject) => {
+    const term = subjectSearch.toLowerCase();
+    return (
+      subject.name.toLowerCase().includes(term) ||
+      subject.code.toLowerCase().includes(term)
+    );
+  });
+
   return (
     <div>
       <div className="page-header">
@@ -164,33 +173,49 @@ function Subjects() {
       {subjects.length === 0 ? (
         <p className="page-sub">No subjects added yet.</p>
       ) : (
-        <div className="card-grid">
-          {subjects.map((subject) => (
-            <div className="subject-card" key={subject.id}>
-              <div className="subject-card-icon"><BookOpen size={20} /></div>
-              <div className="subject-card-name">{subject.name}</div>
-              <div className="subject-card-code">{subject.code}</div>
-              <div className="subject-card-streams">
-                {subject.streams
-                  ? subject.streams.split(',').map((s) => (
-                      <span className="stream-pill" key={s}>{s}</span>
-                    ))
-                  : <span className="subject-card-unassigned">Not assigned to any stream</span>}
-              </div>
-              <div className="subject-card-actions">
-                <button className="icon-btn" title="Assign to streams" onClick={() => openAssign(subject)}>
-                  <Layers size={16} />
-                </button>
-                <button className="icon-btn" title="Edit" onClick={() => handleEdit(subject)}>
-                  <Pencil size={16} />
-                </button>
-                <button className="icon-btn danger" title="Delete" onClick={() => handleDelete(subject.id)}>
-                  <Trash2 size={16} />
-                </button>
-              </div>
+        <>
+          <div className="filter-bar">
+            <input
+              type="text"
+              className="subject-search-input"
+              placeholder="Search subjects by name or code..."
+              value={subjectSearch}
+              onChange={(e) => setSubjectSearch(e.target.value)}
+            />
+          </div>
+
+          {filteredSubjects.length === 0 ? (
+            <p className="page-sub">No subjects match your search.</p>
+          ) : (
+            <div className="card-grid">
+              {filteredSubjects.map((subject) => (
+                <div className="subject-card" key={subject.id}>
+                  <div className="subject-card-icon"><BookOpen size={20} /></div>
+                  <div className="subject-card-name">{subject.name}</div>
+                  <div className="subject-card-code">{subject.code}</div>
+                  <div className="subject-card-streams">
+                    {subject.streams
+                      ? subject.streams.split(',').map((s) => (
+                          <span className="stream-pill" key={s}>{s}</span>
+                        ))
+                      : <span className="subject-card-unassigned">Not assigned to any stream</span>}
+                  </div>
+                  <div className="subject-card-actions">
+                    <button className="icon-btn" title="Assign to streams" onClick={() => openAssign(subject)}>
+                      <Layers size={16} />
+                    </button>
+                    <button className="icon-btn" title="Edit" onClick={() => handleEdit(subject)}>
+                      <Pencil size={16} />
+                    </button>
+                    <button className="icon-btn danger" title="Delete" onClick={() => handleDelete(subject.id)}>
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
 
       {assigningSubject && (
