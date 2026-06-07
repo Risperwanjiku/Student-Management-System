@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, Eye } from 'lucide-react';
 
 const API_URL = `${import.meta.env.VITE_API_URL}/api/students`;
 const STREAMS_URL = `${import.meta.env.VITE_API_URL}/api/class-streams`;
@@ -18,6 +18,7 @@ function Students({ search = '' }) {
   const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [selectedStudent, setSelectedStudent] = useState(null);
 
   const [name, setName] = useState('');
   const [admissionNo, setAdmissionNo] = useState('');
@@ -120,6 +121,15 @@ function Students({ search = '' }) {
     setError('');
   };
 
+  // open a single student's details
+  const handleView = (student) => {
+    setSelectedStudent(student);
+  };
+
+  const closeView = () => {
+    setSelectedStudent(null);
+  };
+
   const filteredStudents = students.filter((student) => {
     const term = search.toLowerCase();
     const matchesSearch =
@@ -129,6 +139,47 @@ function Students({ search = '' }) {
       streamFilter === '' || String(student.class_stream_id) === streamFilter;
     return matchesSearch && matchesStream;
   });
+
+  // detail view for a single student
+  if (selectedStudent) {
+    return (
+      <div>
+        <div className="page-header">
+          <div>
+            <h2>{selectedStudent.name}</h2>
+            <p className="page-sub">Student details.</p>
+          </div>
+          <button className="btn-link" onClick={closeView}>← Back to students</button>
+        </div>
+
+        <div className="table-card">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Admission Number</th>
+                <th>Gender</th>
+                <th>Class Stream</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div className="student-cell">
+                    <span className="avatar">{getInitials(selectedStudent.name)}</span>
+                    <div className="student-name">{selectedStudent.name}</div>
+                  </div>
+                </td>
+                <td>{selectedStudent.admission_no}</td>
+                <td>{selectedStudent.gender || '-'}</td>
+                <td>{selectedStudent.stream_name ? <span className="stream-pill">{selectedStudent.stream_name}</span> : '-'}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -196,7 +247,7 @@ function Students({ search = '' }) {
                     <div className="student-cell">
                       <span className="avatar">{getInitials(student.name)}</span>
                       <div>
-                        <div className="student-name">{student.name}</div>
+                        <div className="student-name" style={{ cursor: 'pointer' }} onClick={() => handleView(student)}>{student.name}</div>
                         <div className="student-gender">{student.gender}</div>
                       </div>
                     </div>
@@ -204,6 +255,9 @@ function Students({ search = '' }) {
                   <td>{student.admission_no}</td>
                   <td>{student.stream_name ? <span className="stream-pill">{student.stream_name}</span> : '-'}</td>
                   <td>
+                    <button className="icon-btn" title="View" onClick={() => handleView(student)}>
+                      <Eye size={16} />
+                    </button>
                     <button className="icon-btn" title="Edit" onClick={() => handleEdit(student)}>
                       <Pencil size={16} />
                     </button>
