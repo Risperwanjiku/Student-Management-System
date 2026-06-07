@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, Eye } from 'lucide-react';
 
 const API_URL = `${import.meta.env.VITE_API_URL}/api/class-streams`;
+const STUDENTS_URL = `${import.meta.env.VITE_API_URL}/api/students`;
 
 function ClassStreams() {
   const [streams, setStreams] = useState([]);
@@ -9,6 +10,8 @@ function ClassStreams() {
   const [newName, setNewName] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState('');
+  const [selectedStream, setSelectedStream] = useState(null);
+  const [streamStudents, setStreamStudents] = useState([]);
 
   useEffect(() => {
     fetchStreams();
@@ -77,6 +80,65 @@ function ClassStreams() {
     setEditingId(null);
   };
 
+  // open a single stream and show the students in it
+  const handleView = async (stream) => {
+    setSelectedStream(stream);
+    try {
+      const res = await fetch(STUDENTS_URL);
+      const data = await res.json();
+      setStreamStudents(data.filter((s) => s.class_stream_id === stream.id));
+    } catch (err) {
+      console.error('Failed to load students:', err);
+    }
+  };
+
+  const closeView = () => {
+    setSelectedStream(null);
+    setStreamStudents([]);
+  };
+
+  // detail view for a single class stream
+  if (selectedStream) {
+    return (
+      <div>
+        <div className="page-header">
+          <div>
+            <h2>{selectedStream.name}</h2>
+            <p className="page-sub">Students in this class stream.</p>
+          </div>
+          <button className="btn-link" onClick={closeView}>← Back to streams</button>
+        </div>
+
+        <div className="table-card">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Admission No</th>
+                <th>Gender</th>
+              </tr>
+            </thead>
+            <tbody>
+              {streamStudents.length === 0 ? (
+                <tr>
+                  <td colSpan="3">No students in this stream yet.</td>
+                </tr>
+              ) : (
+                streamStudents.map((student) => (
+                  <tr key={student.id}>
+                    <td>{student.name}</td>
+                    <td>{student.admission_no}</td>
+                    <td>{student.gender || '-'}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="page-header">
@@ -119,9 +181,12 @@ function ClassStreams() {
             ) : (
               streams.map((stream) => (
                 <tr key={stream.id}>
-                  <td>{stream.name}</td>
+                  <td style={{ cursor: 'pointer' }} onClick={() => handleView(stream)}>{stream.name}</td>
                   <td>{stream.student_count} students</td>
                   <td>
+                    <button className="icon-btn" title="View" onClick={() => handleView(stream)}>
+                      <Eye size={16} />
+                    </button>
                     <button className="icon-btn" title="Edit" onClick={() => handleEdit(stream)}>
                       <Pencil size={16} />
                     </button>
