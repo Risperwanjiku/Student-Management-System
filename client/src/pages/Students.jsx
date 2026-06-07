@@ -19,6 +19,8 @@ function Students({ search = '' }) {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5;
 
   const [name, setName] = useState('');
   const [admissionNo, setAdmissionNo] = useState('');
@@ -29,6 +31,11 @@ function Students({ search = '' }) {
     fetchStudents();
     fetchStreams();
   }, []);
+
+  // go back to page 1 whenever the search or stream filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, streamFilter]);
 
   const fetchStudents = async () => {
     try {
@@ -140,6 +147,10 @@ function Students({ search = '' }) {
     return matchesSearch && matchesStream;
   });
 
+  // pagination: slice the filtered list into pages
+  const totalPages = Math.max(1, Math.ceil(filteredStudents.length / pageSize));
+  const paginatedStudents = filteredStudents.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
   // detail view for a single student
   if (selectedStudent) {
     return (
@@ -241,7 +252,7 @@ function Students({ search = '' }) {
                 <td colSpan="4">{search || streamFilter ? 'No students match your filters.' : 'No students added yet.'}</td>
               </tr>
             ) : (
-              filteredStudents.map((student) => (
+              paginatedStudents.map((student) => (
                 <tr key={student.id}>
                   <td>
                     <div className="student-cell">
@@ -271,6 +282,18 @@ function Students({ search = '' }) {
           </tbody>
         </table>
       </div>
+
+      {totalPages > 1 && (
+        <div className="pagination" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginTop: '16px' }}>
+          <button className="btn-link" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>Page {currentPage} of {totalPages}</span>
+          <button className="btn-link" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }
