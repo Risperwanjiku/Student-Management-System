@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Pencil, Trash2 } from 'lucide-react';
 
-const API_URL = 'http://localhost:5000/api/class-streams';
+const API_URL = `${import.meta.env.VITE_API_URL}/api/class-streams`;
 
 function ClassStreams() {
   const [streams, setStreams] = useState([]);

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Users, Layers, BookOpen } from 'lucide-react';
 
-const STUDENTS_URL = 'http://localhost:5000/api/students';
-const STREAMS_URL = 'http://localhost:5000/api/class-streams';
-const SUBJECTS_URL = 'http://localhost:5000/api/subjects';
+const STUDENTS_URL = `${import.meta.env.VITE_API_URL}/api/students`;
+const STREAMS_URL = `${import.meta.env.VITE_API_URL}/api/class-streams`;
+const SUBJECTS_URL = `${import.meta.env.VITE_API_URL}/api/subjects`;
 
 function Dashboard() {
   const [students, setStudents] = useState([]);

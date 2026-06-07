@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Pencil, Trash2, BookOpen, Layers } from 'lucide-react';
 
-const API_URL = 'http://localhost:5000/api/subjects';
-const STREAMS_URL = 'http://localhost:5000/api/class-streams';
+const API_URL = `${import.meta.env.VITE_API_URL}/api/subjects`;
+const STREAMS_URL = `${import.meta.env.VITE_API_URL}/api/class-streams`;
 
 function Subjects() {
   const [subjects, setSubjects] = useState([]);

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Lock } from 'lucide-react';
 
-const API_URL = 'http://localhost:5000/api/auth';
+const API_URL = `${import.meta.env.VITE_API_URL}/api/auth`;
 
 function getInitials(name) {
   if (!name) return '';

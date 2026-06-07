@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-const RESULTS_URL = 'http://localhost:5000/api/results';
-const STREAMS_URL = 'http://localhost:5000/api/class-streams';
+const RESULTS_URL = `${import.meta.env.VITE_API_URL}/api/results`;
+const STREAMS_URL = `${import.meta.env.VITE_API_URL}/api/class-streams`;
 
 // colors for the PDF documents
 const REPORT_COLOR = [30, 58, 95];    // navy for headers and numbers

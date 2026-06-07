@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { User, Lock } from 'lucide-react';
 
-const LOGIN_URL = 'http://localhost:5000/api/auth/login';
+const LOGIN_URL = `${import.meta.env.VITE_API_URL}/api/auth/login`;
 
 // demo account — intentionally public so reviewers can get in with one click
 const DEMO_USER = 'demo';

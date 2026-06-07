@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const API_URL = 'http://localhost:5000/api/grading-scale';
+const API_URL = `${import.meta.env.VITE_API_URL}/api/grading-scale`;
 
 function Settings() {
   const [scale, setScale] = useState([]);

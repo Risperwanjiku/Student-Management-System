@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
-const RESULTS_URL = 'http://localhost:5000/api/results';
-const STREAMS_URL = 'http://localhost:5000/api/class-streams';
+const RESULTS_URL = `${import.meta.env.VITE_API_URL}/api/results`;
+const STREAMS_URL = `${import.meta.env.VITE_API_URL}/api/class-streams`;
 
 function getInitials(name) {
   const parts = name.trim().split(' ');

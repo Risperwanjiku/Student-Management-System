@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
-const SCORES_URL = 'http://localhost:5000/api/scores';
-const STREAMS_URL = 'http://localhost:5000/api/class-streams';
+const SCORES_URL = `${import.meta.env.VITE_API_URL}/api/scores`;
+const STREAMS_URL = `${import.meta.env.VITE_API_URL}/api/class-streams`;
 
 function getInitials(name) {
   const parts = name.trim().split(' ');
