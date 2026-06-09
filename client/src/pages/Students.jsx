@@ -10,6 +10,36 @@ function getInitials(name) {
   return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
 }
 
+// build the list of page numbers to show, with ... for long lists
+function getPageNumbers(current, total) {
+  const pages = [];
+  if (total <= 7) {
+    for (let i = 1; i <= total; i++) pages.push(i);
+  } else {
+    pages.push(1);
+    if (current > 3) pages.push('...');
+    const start = Math.max(2, current - 1);
+    const end = Math.min(total - 1, current + 1);
+    for (let i = start; i <= end; i++) pages.push(i);
+    if (current < total - 2) pages.push('...');
+    pages.push(total);
+  }
+  return pages;
+}
+
+// style for the non-active page / arrow buttons
+const pageBtnStyle = (disabled) => ({
+  minWidth: '36px',
+  height: '36px',
+  padding: '0 10px',
+  borderRadius: '8px',
+  border: '1px solid #e5e7eb',
+  background: '#fff',
+  color: disabled ? '#cbd5e1' : '#374151',
+  cursor: disabled ? 'not-allowed' : 'pointer',
+  fontSize: '14px',
+});
+
 function Students({ search = '' }) {
   const [students, setStudents] = useState([]);
   const [streams, setStreams] = useState([]);
@@ -147,9 +177,18 @@ function Students({ search = '' }) {
     return matchesSearch && matchesStream;
   });
 
-  // pagination: slice the filtered list into pages
+  // pagination
   const totalPages = Math.max(1, Math.ceil(filteredStudents.length / pageSize));
   const paginatedStudents = filteredStudents.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const startIndex = filteredStudents.length === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const endIndex = Math.min(currentPage * pageSize, filteredStudents.length);
+
+  // if a deletion leaves us past the last page, step back
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   // detail view for a single student
   if (selectedStudent) {
@@ -281,19 +320,49 @@ function Students({ search = '' }) {
             )}
           </tbody>
         </table>
-      </div>
 
-      {totalPages > 1 && (
-        <div className="pagination" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginTop: '16px' }}>
-          <button className="btn-link" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
-            Previous
-          </button>
-          <span>Page {currentPage} of {totalPages}</span>
-          <button className="btn-link" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
-            Next
-          </button>
-        </div>
-      )}
+        {filteredStudents.length > 0 && (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', padding: '14px 16px', borderTop: '1px solid #f0f0f0' }}>
+            <span style={{ color: '#6b7280', fontSize: '14px' }}>
+              Showing {startIndex} to {endIndex} of {filteredStudents.length} results
+            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                style={pageBtnStyle(currentPage === 1)}
+              >
+                ‹
+              </button>
+              {getPageNumbers(currentPage, totalPages).map((p, i) =>
+                p === '...' ? (
+                  <span key={`ellipsis-${i}`} style={{ padding: '0 4px', color: '#9ca3af' }}>…</span>
+                ) : (
+                  <button
+                    key={p}
+                    onClick={() => setCurrentPage(p)}
+                    className={p === currentPage ? 'btn-primary' : ''}
+                    style={
+                      p === currentPage
+                        ? { minWidth: '36px', height: '36px', padding: '0 10px', borderRadius: '8px', fontSize: '14px', border: 'none', cursor: 'pointer' }
+                        : pageBtnStyle(false)
+                    }
+                  >
+                    {p}
+                  </button>
+                )
+              )}
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                style={pageBtnStyle(currentPage === totalPages)}
+              >
+                ›
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
