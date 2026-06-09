@@ -19,6 +19,22 @@ router.get('/', async (req, res) => {
   }
 });
 
+// get the subjects assigned to a class stream
+router.get('/:id/subjects', async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT subjects.id, subjects.name, subjects.code
+      FROM subjects
+      JOIN subject_streams ON subject_streams.subject_id = subjects.id
+      WHERE subject_streams.class_stream_id = ?
+      ORDER BY subjects.name
+    `, [req.params.id]);
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch stream subjects' });
+  }
+});
+
 // get a single class stream
 router.get('/:id', async (req, res) => {
   try {
